@@ -37,7 +37,7 @@ Este script ejecutará las migraciones necesarias en la base de datos MongoDB.
    Si tu proyecto incluye un servidor o aplicación, puedes ejecutarlo con:
 
 ```bash
-python3 app/main.py
+python3 -m app.main
 ```
 
 Esto iniciará el servidor en tu máquina local.
