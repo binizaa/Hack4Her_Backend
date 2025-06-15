@@ -27,10 +27,10 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,          
-    allow_credentials=True,         
-    allow_methods=["*"],            
-    allow_headers=["*"],            
+    allow_origins=["*"],  # Permitir todos los orígenes, puedes restringir a tus dominios específicos
+    allow_credentials=True,
+    allow_methods=["*"],  # Permitir todos los métodos HTTP
+    allow_headers=["*"],  # Permitir todos los headers
 )
 
 # # --- Eventos de la Aplicación (Startup y Shutdown) ---
