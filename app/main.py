@@ -54,7 +54,7 @@ app.add_middleware(
 app.include_router(products.router, prefix="/products", tags=["Products"])
 app.include_router(user.router, prefix="/users", tags=["users"])
 app.include_router(gemini_api.router, prefix="/gemini", tags=["Gemini AI"])
-
+    
 # --- Punto de entrada para ejecutar la aplicación con Uvicorn ---
 if __name__ == "__main__":
     print("Iniciando servidor Uvicorn...")
