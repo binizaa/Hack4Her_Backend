@@ -7,6 +7,7 @@ from app.services.database import db
 
 router = APIRouter()
 
+# http://0.0.0.0:8000/products/product-quantities
 @router.get("/product-quantities", response_model=List[ProductQuantity])
 async def get_product_quantities():
     """

@@ -1,45 +1,24 @@
-# app/database.py
-
 from pymongo import MongoClient
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 
-# Cargar variables de entorno desde .env
-# Es buena práctica cargar las variables de entorno al inicio de tu aplicación
-# o en cada módulo que las necesite, si están muy separadas.
+# Cargar variables de entorno desde el archivo .env
 load_dotenv()
 
-MONGODB_URI = os.getenv("MONGODB_URI")
+# Obtener la URI de MongoDB desde las variables de entorno
+MONGODB_URI = os.getenv('MONGODB_URI')
 
-# --- Validaciones y configuración de la conexión ---
-if not MONGODB_URI:
-    raise ValueError("MONGODB_URI no está definida en el archivo .env. "
-                     "Asegúrate de que tu .env contenga MONGODB_URI='mongodb://...'")
+# Crear una instancia del cliente de MongoDB
+client = MongoClient(MONGODB_URI)
 
-try:
-    client = MongoClient(MONGODB_URI)
+# Especifica explícitamente la base de datos
+# Reemplaza 'mydatabase' por el nombre de tu base de datos
+db = client['mydatabase']  # Aquí debes poner el nombre de la base de datos que usas
 
-    db = client['db1']
-
-    youtube_collection = db['youtube']
-
-    print("MongoDB client inicializado. Conexión a la base de datos 'db1' lista.")
-
-except Exception as e:
-    print(f"ERROR: No se pudo conectar a MongoDB. Revisa tu MONGODB_URI y el estado del servidor. Detalles: {e}")
-    client = None 
-    db = None
-
+# Cerrar la conexión
 def close_mongo_connection():
-    """Cierra la conexión activa a MongoDB."""
-    if client:
-        client.close()
-        print("Conexión a MongoDB cerrada.")
+    client.close()
 
-def get_mongo_client():
-    """Retorna la instancia global del cliente MongoDB."""
-    return client
-
+# Si necesitas exportar otras funciones o colecciones
 def get_database():
-    """Retorna la instancia global de la base de datos MongoDB."""
     return db
