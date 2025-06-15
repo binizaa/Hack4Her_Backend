@@ -7,11 +7,11 @@ import os
 # Si estás ejecutando esto localmente, puedes definir MONGODB_URI en tu shell
 # export MONGODB_URI="mongodb+srv://binizarz:vUopdTEx4e7MK4f5@cluster0.oqbmpew.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 MONGO_URI = os.getenv("MONGODB_URI", "mongodb+srv://binizarz:vUopdTEx4e7MK4f5@cluster0.oqbmpew.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-DB_NAME = "volumen_db"  # Nombre de tu base de datos en MongoDB
-COLLECTION_NAME = "productos_recomendados" # Nombre de la colección donde se insertarán los datos
+DB_NAME = "users_db"  # Nombre de tu base de datos en MongoDB
+COLLECTION_NAME = "clasificaciones" # Nombre de la colección donde se insertarán los datos (MODIFICADO)
 
 # Ruta al archivo CSV
-csv_file_path = "volumen.csv"  # ¡Asegúrate de que este sea el nombre correcto del archivo!
+csv_file_path = "clasificacion.csv"  # ¡MODIFICADO para que coincida con la imagen!
 
 # Conexión a MongoDB Atlas con SSL
 # tlsAllowInvalidCertificates=False es una buena práctica para producción.
@@ -43,8 +43,8 @@ try:
     with open(csv_file_path, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         
-        # Opcional: Verificar que las columnas esperadas existan en el CSV
-        expected_headers = ['ID Cliente', 'Volumen Estimado', 'Producto Recomendado']
+        # Opcional: Verificar que las columnas esperadas existan en el CSV (MODIFICADO)
+        expected_headers = ['ID Cliente', 'meses_consecutivos', 'Categoria']
         if not all(header in reader.fieldnames for header in expected_headers):
             print(f"Error: El archivo CSV no contiene todas las columnas esperadas. Columnas encontradas: {reader.fieldnames}")
             print(f"Columnas esperadas: {expected_headers}")
@@ -54,11 +54,11 @@ try:
         for row in reader:
             lineas_procesadas += 1
             try:
-                # Mapeo de columnas del CSV a campos del documento MongoDB
+                # Mapeo de columnas del CSV a campos del documento MongoDB (MODIFICADO)
                 doc = {
                     'id_cliente': int(row['ID Cliente']),
-                    'volumen_estimado': float(row['Volumen Estimado']),
-                    'producto_recomendado': row['Producto Recomendado'].strip() if row.get('Producto Recomendado') else None
+                    'meses_consecutivos': int(row['meses_consecutivos']),
+                    'categoria': row['Categoria'].strip() if row.get('Categoria') else None
                 }
                 
                 # Insertar documento
@@ -68,7 +68,7 @@ try:
                 print(f"Error de valor en la línea {lineas_procesadas}: {row} - {ve}. Saltando esta línea.")
                 lineas_con_errores += 1
             except KeyError as ke:
-                print(f"Error de columna faltante en la línea. Saltando esta línea.")
+                print(f"Error de columna faltante en la línea {lineas_procesadas}: {row} - {ke}. Saltando esta línea.")
                 lineas_con_errores += 1
             except Exception as e:
                 print(f"Error inesperado en la línea {lineas_procesadas}: {row} - {e}. Saltando esta línea.")
