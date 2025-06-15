@@ -31,7 +31,7 @@ async def get_exploration(client_id: int):
         raise HTTPException(status_code=404, detail="Cliente no encontrado")
 
 # --- Endpoint para consultar información por id_cliente ---
-# http://0.0.0.0:8000/products//exploration/{client_id}
+# http://0.0.0.0:8000/products/volumen/{client_id}
 @router.get("/volumen/{client_id}")
 async def get_exploration(client_id: int):
     informacion = get_exploration_by_client_id(client_id)
