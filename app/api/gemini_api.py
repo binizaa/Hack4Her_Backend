@@ -52,10 +52,12 @@ def get_tua_message(sentiment: bool):
     
     return response.text
 
-def get_product_message(producto: dict):
+import random
+
+def get_product_message(producto: dict, category: str):
     """
     Genera un mensaje de Tua sobre un producto nuevo que debe ser probado.
-    El mensaje incluirá la categoría, nombre del producto y su cantidad estimada.
+    El mensaje incluirá todos los datos disponibles del producto.
     El tono será alegre y amigable, con un enfoque en incentivar la prueba del producto.
     """
 
@@ -74,16 +76,24 @@ def get_product_message(producto: dict):
     )
 
     # Instrucciones personalizadas para el producto
-    product_instruction = (
-        f"¡Atención! El producto nuevo disponible en tu tienda es: {producto['producto']} de la categoría {producto['categoria']}. "
-        f"Este producto tiene una cantidad estimada de {producto['cantidad_estimada']} unidades. "
+    product_instruction = "¡Atención! El producto nuevo disponible en tu tienda es: "
+
+    # Iterar sobre todos los elementos del producto y agregar al mensaje
+    for key, value in producto.items():
+        product_instruction += f"{key}: {value}. "
+
+    # Incluir la categoría si es proporcionada
+    if category:
+        product_instruction += f"Es un excelente producto para la categoría de {category}. "
+
+    product_instruction += (
         "Anímales a probarlo y a descubrir cómo puede beneficiar su tienda o satisfacer las necesidades de sus clientes."
     )
 
     # Combina las instrucciones para formar el prompt final
     full_prompt = f"{persona_instruction}\n{product_instruction}\n\nEnvía el mensaje en primera persona como Tua, de forma concisa y cercana."
 
-    # Genera el contenido utilizando el modelo de Gemini
+    # Generar el contenido utilizando el modelo de Gemini
     response = client.models.generate_content(
         model="gemma-3-1b-it",
         contents=full_prompt

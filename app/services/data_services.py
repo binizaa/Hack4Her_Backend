@@ -1,20 +1,21 @@
 from app.database import get_database
 
 #http://127.0.0.1:8000/exploration/1005
-def get_exploration_by_client_id(id_cliente):
-    db = get_database("exploracion_db")
-    collection = db["productos_recomendados"]
+from bson import ObjectId
+
+def get_by_client_id(id_cliente, db_name, collection_name):
+    db = get_database(db_name)
+    collection = db[collection_name]
     
-    # Buscar el documento con el id_cliente
     result = collection.find_one({"id_cliente": id_cliente})
     
     if result:
-        # Extraer los campos específicos
+        result["_id"] = str(result["_id"]) 
         exploration_data = {
-            "cantidad_estimada": result.get("cantidad_estimada"),
-            "categoria": result.get("categoria"),
-            "producto": result.get("producto")
+            key: str(value) if isinstance(value, ObjectId) else value
+            for key, value in result.items()
         }
         return exploration_data
     else:
         return "No document found with that client_id."
+
