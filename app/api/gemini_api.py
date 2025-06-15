@@ -101,6 +101,16 @@ def get_product_message(producto: dict, category: str):
 
     return response.text
 
+
+    # Limitar la longitud del nombre a máximo 5 palabras
+    challenge_name = response.text.strip()
+    challenge_name_words = challenge_name.split()
+    if len(challenge_name_words) > 5:
+        challenge_name = ' '.join(challenge_name_words[:5])
+
+    return challenge_name
+
+
 @router.get("/tua-message/{sentiment_code}")
 async def get_tua_consumption_message(sentiment_code: int):
     print(f"Recibida petición: sentiment_code={sentiment_code}") 

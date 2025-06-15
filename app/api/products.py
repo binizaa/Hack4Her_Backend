@@ -8,9 +8,9 @@ from app.api.gemini_api import get_product_message
 router = APIRouter()
 
 # --- Endpoint para consultar información por id_cliente ---
+# http://0.0.0.0:8000/products//exploracion/{client_id}
 #Ejemplo
-#http://0.0.0.0:8000/products/volumen/{client_id}
-# http://0.0.0.0:8000/products/exploracion/{client_id}
+#http://0.0.0.0:8000/products/volumen/1007
 @router.get("/{category}/{client_id}")
 async def get_exploration(client_id: int, category: str):
     db_name = f"{category}_db"
