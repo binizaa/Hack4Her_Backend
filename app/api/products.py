@@ -25,6 +25,16 @@ async def get_product_quantities():
 async def get_exploration(client_id: int):
     informacion = get_exploration_by_client_id(client_id)
     if informacion:
-        return informacion
+        # Frase natural
+        frase = f"Hola, encontramos los siguientes productos recomendados para el cliente con ID {client_id}:"
+        
+        # Productos en formato JSON
+        productos = {
+            "cantidad_estimada": informacion["cantidad_estimada"],
+            "categoria": informacion["categoria"],
+            "producto": informacion["producto"]
+        }
+        
+        return {"frase": frase, "productos": productos}
     else:
         raise HTTPException(status_code=404, detail="Cliente no encontrado")

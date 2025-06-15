@@ -68,7 +68,7 @@ async def get_tua_consumption_message(sentiment_code: int):
 
     try:
         tua_response = get_tua_message(is_positive) 
-        print(f"Respuesta generada: {tua_response}")  # Debug
+        print(f"Respuesta generada: {tua_response}")  
         return {"tua_message": tua_response}
     except Exception as e:
         print(f"Error: {e}")
