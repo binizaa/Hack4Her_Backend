@@ -8,7 +8,7 @@ import uvicorn
 
 # from app.services.database import db, youtube_collection, close_mongo_connection, get_database
 
-from app.api import products, user
+from app.api import products, user, gemini_api
 
 # Definir los orígenes permitidos
 origins = [
@@ -53,6 +53,7 @@ app.add_middleware(
 # --- Inclusión de Routers (Endpoints) ---
 app.include_router(products.router, prefix="/products", tags=["Products"])
 app.include_router(user.router, prefix="/users", tags=["users"])
+app.include_router(gemini_api.router, prefix="/gemini", tags=["Gemini AI"])
 
 # --- Punto de entrada para ejecutar la aplicación con Uvicorn ---
 if __name__ == "__main__":
