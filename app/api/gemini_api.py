@@ -21,36 +21,38 @@ def get_tua_message(sentiment: bool):
         "Tu objetivo es enviar un mensaje breve y personalizado a una persona sobre su consumo en productos para su tienda de abarrotes. "
         "El mensaje debe enfocarse en animarle a ver sus retos de la semana y ofrecerle una reflexión ligera. "
         "Usa un tono alegre, amigable y un toque de sabiduría natural o ambiental. "
-        "Puedes incluir alguna exclamación de guacamaya como '¡Pío! y que incetive a comprar más productos'."
+        "Puedes incluir alguna exclamación de guacamaya como '¡Pío!' que incentive a comprar más productos. "
         f"Cambia la temperatura del mensaje a {random_number} "
         "**El mensaje debe tener un máximo de 20 palabras.** "
         "**¡MUY IMPORTANTE: Varia las respuestas cada vez. Que cada mensaje sea diferente y fresco, no repitas frases!**"
     )
 
-    if sentiment: # Si sentimiento es True (positivo)
+    if sentiment:  # Si sentimiento es True (positivo)
         sentiment_instruction = (
-            "El usuario tiene hábitos de consumo positivos. Felicítale sinceramente. "
-            "Anímale a seguir así, resaltando cómo sus decisiones inteligentes en la tienda traen grandes frutos. "
-            "Piensa en diferentes formas de expresar 'qué bien' o 'sabiduría' cada vez."
+            "¡Qué bien! Estás tomando decisiones inteligentes para tu tienda. "
+            "¡No dejes pasar esta oportunidad! Aprovecha y compra los mejores productos ahora mismo. "
+            "¡Sigue así y verás cómo tu negocio crece cada vez más! "
+            "Recuerda, cada decisión que tomas es un paso hacia el éxito. ¡Vamos por más!"
         )
-    else: # Si sentimiento es False (negativo)
+    else:  # Si sentimiento es False (negativo)
         sentiment_instruction = (
-            "El usuario tiene hábitos de consumo que necesitan un ajuste. "
-            "Exprésale tu preocupación de manera amable y constructiva. "
-            "Ofrécele una pequeña sugerencia para reflexionar sobre sus 'picotazos' al comprar o la 'cantidad de semillas' que usa. "
-            "Piensa en diferentes formas de sugerir 'reflexión' o 'mejora' cada vez."
+            "¡Es momento de reflexionar! Tus decisiones de compra son clave para el crecimiento de tu negocio. "
+            "¡Anímate a probar algo nuevo! ¡Hazlo ahora y verás resultados! "
+            "Recuerda que cada cambio pequeño puede traer grandes frutos. "
+            "¡Es el momento perfecto para mejorar y aprovechar nuevas oportunidades!"
         )
 
     # Combina las instrucciones para formar el prompt final
     full_prompt = f"{persona_instruction}\n{sentiment_instruction}\n\nEnvía el mensaje en primera persona como Tua, de forma concisa y cercana."
 
-    # Generate content using the Gemini model
+    # Generar el contenido utilizando el modelo de Gemini
     response = client.models.generate_content(
         model="gemma-3-1b-it",
         contents=full_prompt
     )
     
     return response.text
+
 
 import random
 

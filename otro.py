@@ -7,11 +7,11 @@ import os
 # Si estás ejecutando esto localmente, puedes definir MONGODB_URI en tu shell
 # export MONGODB_URI="mongodb+srv://binizarz:vUopdTEx4e7MK4f5@cluster0.oqbmpew.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 MONGO_URI = os.getenv("MONGODB_URI", "mongodb+srv://binizarz:vUopdTEx4e7MK4f5@cluster0.oqbmpew.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-DB_NAME = "users_db"  # Nombre de tu base de datos en MongoDB
-COLLECTION_NAME = "clasificaciones" # Nombre de la colección donde se insertarán los datos (MODIFICADO)
+DB_NAME = "activacion_db"  # Nombre de tu base de datos en MongoDB
+COLLECTION_NAME = "productos_recomendados" # Nombre de la colección donde se insertarán los datos (MODIFICADO para activacion.csv)
 
 # Ruta al archivo CSV
-csv_file_path = "clasificacion.csv"  # ¡MODIFICADO para que coincida con la imagen!
+csv_file_path = "activacion.csv"  # MODIFICADO para usar activacion.csv
 
 # Conexión a MongoDB Atlas con SSL
 # tlsAllowInvalidCertificates=False es una buena práctica para producción.
@@ -43,10 +43,11 @@ try:
     with open(csv_file_path, mode='r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         
-        # Opcional: Verificar que las columnas esperadas existan en el CSV (MODIFICADO)
-        expected_headers = ['ID Cliente', 'meses_consecutivos', 'Categoria']
+        # MODIFICADO: Verificar que las columnas esperadas existan en el CSV
+        expected_headers = ['ID Cliente', 'Producto_recomendado', 'Cantidad_recomendada', 'probabilidad_recompra']
         if not all(header in reader.fieldnames for header in expected_headers):
-            print(f"Error: El archivo CSV no contiene todas las columnas esperadas. Columnas encontradas: {reader.fieldnames}")
+            print(f"Error: El archivo CSV '{csv_file_path}' no contiene todas las columnas esperadas.")
+            print(f"Columnas encontradas: {reader.fieldnames}")
             print(f"Columnas esperadas: {expected_headers}")
             client.close()
             exit()
@@ -54,18 +55,19 @@ try:
         for row in reader:
             lineas_procesadas += 1
             try:
-                # Mapeo de columnas del CSV a campos del documento MongoDB (MODIFICADO)
+                # MODIFICADO: Mapeo de columnas del CSV a campos del documento MongoDB
                 doc = {
                     'id_cliente': int(row['ID Cliente']),
-                    'meses_consecutivos': int(row['meses_consecutivos']),
-                    'categoria': row['Categoria'].strip() if row.get('Categoria') else None
+                    'producto_recomendado': row['Producto_recomendado'].strip(),
+                    'cantidad_recomendada': int(row['Cantidad_recomendada']),
+                    'probabilidad_recompra': float(row['probabilidad_recompra'])
                 }
                 
                 # Insertar documento
                 collection.insert_one(doc)
                 total_docs += 1
             except ValueError as ve:
-                print(f"Error de valor en la línea {lineas_procesadas}: {row} - {ve}. Saltando esta línea.")
+                print(f"Error de tipo de dato en la línea {lineas_procesadas}: {row} - {ve}. Saltando esta línea.")
                 lineas_con_errores += 1
             except KeyError as ke:
                 print(f"Error de columna faltante en la línea {lineas_procesadas}: {row} - {ke}. Saltando esta línea.")
@@ -93,7 +95,7 @@ print(f"- Documentos actuales en la colección '{COLLECTION_NAME}': {collection.
 
 # Verificar conexión
 print("\n💾 Configuración de MongoDB:")
-print(f"- Servidor: {client.HOST}:{client.PORT}")
+print(f"- Servidor: {client.HOST}:{client.PORT}") # Note: client.HOST and client.PORT might not always give a meaningful address for Atlas clusters
 print(f"- Base de datos: {DB_NAME}")
 print(f"- Colección: {COLLECTION_NAME}")
 
