@@ -101,14 +101,39 @@ def get_product_message(producto: dict, category: str):
 
     return response.text
 
+def get_reto_name(producto: dict, category: str):
+    random_number = random.uniform(0.7, 1)
 
-    # Limitar la longitud del nombre a máximo 5 palabras
-    challenge_name = response.text.strip()
-    challenge_name_words = challenge_name.split()
-    if len(challenge_name_words) > 5:
-        challenge_name = ' '.join(challenge_name_words[:5])
+    # Instrucción para generar un nombre creativo
+    persona_instruction = (
+        "Genera un nombre creativo para un reto relacionado con un producto nuevo de tienda de abarrotes. "
+        "El nombre debe ser fresco, alegre y atractivo, reflejando la emoción de probar algo nuevo. "
+        "El reto debe ser breve y motivador, con un toque dinámico que incite a la acción. "
+        "Incluye elementos del producto como el nombre, categoría o características, pero en un formato divertido y energizante. "
+        "El objetivo es inspirar a los usuarios a participar de manera entusiasta. "
+        "El nombre debe tener un máximo de 5 palabras, solo dame el nombre, sin más detalles."
+    )
 
-    return challenge_name
+    # Instrucciones personalizadas para el producto
+    product_instruction = "¡Atención! El producto nuevo disponible en tu tienda es: "
+
+    # Agregar los detalles del producto
+    for key, value in producto.items():
+        product_instruction += f"{key}: {value}. "
+
+    # Combina las instrucciones para formar el prompt final
+    full_prompt = f"{persona_instruction}\n{product_instruction}"
+
+    # Generar el contenido utilizando el modelo de Gemini
+    response = client.models.generate_content(
+        model="gemma-3-1b-it",
+        contents=full_prompt
+    )
+
+    # Filtrar solo el nombre del reto
+    reto_name = response.text.strip().split("\n")[0]  # Solo el primer fragmento
+
+    return reto_name
 
 
 @router.get("/tua-message/{sentiment_code}")
