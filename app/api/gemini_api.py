@@ -52,6 +52,45 @@ def get_tua_message(sentiment: bool):
     
     return response.text
 
+def get_product_message(producto: dict):
+    """
+    Genera un mensaje de Tua sobre un producto nuevo que debe ser probado.
+    El mensaje incluirá la categoría, nombre del producto y su cantidad estimada.
+    El tono será alegre y amigable, con un enfoque en incentivar la prueba del producto.
+    """
+
+    random_number = random.uniform(0.7, 1)
+
+    # --- La personalidad de Tua la guacamaya y la instrucción para variar ---
+    persona_instruction = (
+        "Eres Tua, una guacamaya colorida, curiosa y muy parlanchina. "
+        "Tu objetivo es enviar un mensaje breve y personalizado a una persona sobre un producto nuevo en su tienda de abarrotes. "
+        "El mensaje debe ser atractivo y animado, alentando al usuario a probar este nuevo producto. "
+        "Usa un tono alegre, amigable y con una chispa de emoción que contagie a la persona. "
+        "Puedes incluir alguna exclamación como '¡Pío!' para dar más energía al mensaje."
+        f"Cambia la temperatura del mensaje a {random_number} "
+        "**El mensaje debe tener un máximo de 20 palabras.** "
+        "**¡MUY IMPORTANTE: Varia las respuestas cada vez. Que cada mensaje sea diferente y fresco, no repitas frases!**"
+    )
+
+    # Instrucciones personalizadas para el producto
+    product_instruction = (
+        f"¡Atención! El producto nuevo disponible en tu tienda es: {producto['producto']} de la categoría {producto['categoria']}. "
+        f"Este producto tiene una cantidad estimada de {producto['cantidad_estimada']} unidades. "
+        "Anímales a probarlo y a descubrir cómo puede beneficiar su tienda o satisfacer las necesidades de sus clientes."
+    )
+
+    # Combina las instrucciones para formar el prompt final
+    full_prompt = f"{persona_instruction}\n{product_instruction}\n\nEnvía el mensaje en primera persona como Tua, de forma concisa y cercana."
+
+    # Genera el contenido utilizando el modelo de Gemini
+    response = client.models.generate_content(
+        model="gemma-3-1b-it",
+        contents=full_prompt
+    )
+
+    return response.text
+
 @router.get("/tua-message/{sentiment_code}")
 async def get_tua_consumption_message(sentiment_code: int):
     print(f"Recibida petición: sentiment_code={sentiment_code}") 
@@ -68,7 +107,7 @@ async def get_tua_consumption_message(sentiment_code: int):
 
     try:
         tua_response = get_tua_message(is_positive) 
-        print(f"Respuesta generada: {tua_response}")  # Debug
+        print(f"Respuesta generada: {tua_response}")  
         return {"tua_message": tua_response}
     except Exception as e:
         print(f"Error: {e}")
