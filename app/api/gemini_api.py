@@ -52,23 +52,15 @@ def get_tua_message(sentiment: bool):
     
     return response.text
 
-# http://0.0.0.0:8000/gemini/tua-message/{sentiment_code}
 @router.get("/tua-message/{sentiment_code}")
-async def get_tua_consumption_message(
-    sentiment_code: int # El parámetro de ruta se recibe como un entero
-):
-    """
-    Genera un mensaje de Tua (la guacamaya) sobre el consumo.
-    Usa 1 para positivo o 0 para negativo.
-    Ejemplo: /gemini/tua-message/1 para positivo, /gemini/tua-message/0 para negativo.
-    """
-    # Convierte el código numérico a un booleano para la función get_tua_message
+async def get_tua_consumption_message(sentiment_code: int):
+    print(f"Recibida petición: sentiment_code={sentiment_code}") 
+    
     if sentiment_code == 1:
         is_positive = True
     elif sentiment_code == 0:
         is_positive = False
     else:
-        # Lanza una excepción si el código no es 0 ni 1
         raise HTTPException(
             status_code=400,
             detail="El parámetro 'sentiment_code' debe ser 1 (positivo) o 0 (negativo)."
@@ -76,8 +68,8 @@ async def get_tua_consumption_message(
 
     try:
         tua_response = get_tua_message(is_positive) 
+        print(f"Respuesta generada: {tua_response}")  # Debug
         return {"tua_message": tua_response}
     except Exception as e:
-        # Registra el error completo para depuración
-        print(f"Error generando mensaje de Tua desde el endpoint API: {e}")
-        raise HTTPException(status_code=500, detail=f"Error interno al generar el mensaje de Tua: {e}")
+        print(f"Error: {e}")
+        raise HTTPException(status_code=500, detail=f"Error interno: {e}")
